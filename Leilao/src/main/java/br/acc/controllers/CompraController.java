@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 
 @RestController
-//@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "http://localhost:4200")
 public class CompraController {
 
     private boolean codProduto;
@@ -47,7 +47,7 @@ public class CompraController {
 
         if(codProduto){
             if(existe){
-                compraRepository.save(compra);
+                compraRepository.save(compra);// Realiza o POST
                 return ResponseEntity
                         .status(Response.Status.CREATED.getStatusCode())
                         .body("Salvo com sucesso");
@@ -76,7 +76,7 @@ public class CompraController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/compras/del/{id}") // ========================= DELETE
+    @DeleteMapping("/compras/del/{id}")
     public ResponseEntity<?> deleteCompra(@PathVariable Long id){
         return compraRepository.findById(id)
                 .map(record -> {

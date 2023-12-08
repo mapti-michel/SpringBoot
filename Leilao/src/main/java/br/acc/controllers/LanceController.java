@@ -18,12 +18,12 @@ public class LanceController {
     @Autowired
     private LanceRepository lanceRepository;
 
-    @RequestMapping(value = "/lances/all", method = RequestMethod.GET) // =================== LISTA
+    @RequestMapping(value = "/lances/all", method = RequestMethod.GET)
     private List<Lance> listaLance(){
         return lanceRepository.findAll();
     }
 
-    @RequestMapping(value = "/lances/{id}", method = RequestMethod.GET) // ================== LISTA ESPECÍFICA
+    @RequestMapping(value = "/lances/{id}", method = RequestMethod.GET)
     private ResponseEntity findLance(@PathVariable Long id){
         Lance lance = new Lance();
         lance.setId(id);
@@ -57,7 +57,7 @@ public class LanceController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/lances/del/{id}") // ========================= DELETE
+    @DeleteMapping("/lances/del/{id}")
     public ResponseEntity<?> deleteLance(@PathVariable Long id){
         return lanceRepository.findById(id)
                 .map(record -> {

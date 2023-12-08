@@ -27,12 +27,14 @@ public class Lance {
     @Column(name = "valorLance")
     private Double valorLance;
 
-    @OneToOne
-    @JoinColumn(name = "codcompra")
+//    @OneToOne
+//    @JoinColumn(name = "codcompra")
+    @Column(name = "codcompra")
     private Long codcompra;
 
-    @OneToOne
-    @JoinColumn(name = "coduser")
+//    @OneToOne
+//    @JoinColumn(name = "coduser")
+    @Column(name = "coduser")
     private Long coduser;
 
 
