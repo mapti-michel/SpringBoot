@@ -1,7 +1,16 @@
 package br.acc.webflux.model.request;
 
-public record UserRequest(
-        String nome,
-        String senha
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-) { }
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class UserRequest {
+
+    String nome;
+    String senha;
+
+
+}

@@ -1,8 +1,12 @@
 package br.acc.webflux.model.response;
 
-public record UserResponse(
-     Long id,
-     String nome,
-     String senha
 
-) {  }
+import lombok.Data;
+
+@Data
+public class UserResponse {
+
+    Long id;
+    String nome;
+    String senha;
+}
