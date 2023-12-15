@@ -2,8 +2,8 @@ package br.acc.webflux.entity;
 
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
