@@ -46,4 +46,17 @@ public class UserService {
                 ;
     }
 
+    public Mono<User> delete(Long id) {
+        return handleNotFound(repository.findAndRemove(id), id);
+    }
+
+    private <T> Mono<T> handleNotFound(Mono<T> mono, Long id){ // Método genérico ou Mono<T> mono, Long id, Class<T> clazz
+        return mono
+                .switchIfEmpty(Mono.error((
+                        new ObjectNotFoundException(
+                                format("Object not found. Id: %s, Type: %s", id, User.class.getSimpleName())
+                        ))
+                ));
+    }
+
 }
