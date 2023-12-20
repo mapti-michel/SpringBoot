@@ -19,8 +19,9 @@ public class UserControllerImpl implements UserController {
     private final UserService service;
     private final UserMapper mapper;
 
-    public UserControllerImpl(UserService service) {
+    public UserControllerImpl(UserService service, UserMapper mapper) {
         this.service = service;
+        this.mapper = mapper;
     }
 
 
@@ -36,7 +37,7 @@ public class UserControllerImpl implements UserController {
         return ResponseEntity
                 .ok()
                 .body(service.findById(id).map(mapper::toResponse));
-        // OU
+//                  OU
 //                .body(service.findById(id).map(obj -> mapper.toResponse(obj)));
     }
 
