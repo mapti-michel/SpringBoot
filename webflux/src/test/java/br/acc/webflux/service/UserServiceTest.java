@@ -54,8 +54,7 @@ class UserServiceTest {
     @Test
     void testFindById(){
         when(repository.findById(anyLong())).thenReturn(Mono.just(User
-                .builder()
-                        .id(1L)
+                .builder().id(1L)
                 .build()));
         Mono<User> result = service.findById(1L);
 
@@ -78,6 +77,29 @@ class UserServiceTest {
                 .verify();
 
         Mockito.verify(repository, times(1)).findAll();
+
+    }
+
+    @Test
+    void testUpdate(){
+        UserRequest request = new UserRequest("Michel", "12345678");
+
+        User entity = User.builder().build();
+
+        when(mapper.toEntity(any(UserRequest.class), any(User.class))).thenReturn(entity);
+
+        when(repository.findById(anyLong())).thenReturn(Mono.just(User.builder().build()));
+
+        when(repository.save(any(User.class))).thenReturn(Mono.just(entity));
+
+        Mono<User> result = service.update(1L, request);
+        StepVerifier.create(result)
+                .expectNextMatches(Objects::nonNull)
+                .expectComplete()
+                .verify();
+
+        Mockito.verify(repository, times(1)).save(any(User.class));
+
 
     }
 
