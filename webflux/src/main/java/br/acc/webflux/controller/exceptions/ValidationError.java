@@ -3,7 +3,7 @@ package br.acc.webflux.controller.exceptions;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.io.Serial;
+//import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import java.util.List;
 @Getter
 public class ValidationError extends StandardError implements Serializable {
 
-    @Serial
+//    @Serial
     private static final long serialVersionUID = 1l;
 
     private List<FieldError> errors = new ArrayList<>();

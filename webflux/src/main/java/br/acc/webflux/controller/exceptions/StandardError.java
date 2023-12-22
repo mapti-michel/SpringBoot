@@ -3,14 +3,14 @@ package br.acc.webflux.controller.exceptions;
 import lombok.Builder;
 import lombok.Data;
 
-import java.io.Serial;
+//import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
 @Builder
 public class StandardError implements Serializable {
-    @Serial
+//    @Serial
     private static final long serialVersionUID = 1l;
 
     private LocalDateTime timestamp;

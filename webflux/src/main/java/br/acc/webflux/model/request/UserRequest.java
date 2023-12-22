@@ -13,7 +13,7 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 public class UserRequest {
 
-    @TrimString
+    @TrimString // Se contém espaços em branco
     @NotBlank (message = "Must not be null or empty")
     @Size(min = 3, max = 50, message = "Must be between 3 and 50 characters")
     String nome;
