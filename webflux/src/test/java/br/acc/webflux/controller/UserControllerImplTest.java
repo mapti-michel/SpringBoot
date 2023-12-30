@@ -19,6 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -29,6 +30,11 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 @AutoConfigureWebTestClient
 class UserControllerImplTest {
+
+    public static final long ID = 1L;
+    public static final String NOME = "Michel";
+    public static final String SENHA = "12345678";
+
 
     @Autowired
     private WebTestClient webTestClient;
@@ -42,7 +48,7 @@ class UserControllerImplTest {
     @Test
     @DisplayName("Test EndPoint save with success")
     void testSaveWithSuccess() {
-        final var request = new UserRequest("Michel", "12345678");
+        final var request = new UserRequest(NOME, SENHA);
 
         when(userService.save(any(UserRequest.class))).thenReturn(Mono.just(User.builder().build()));
 
@@ -58,7 +64,7 @@ class UserControllerImplTest {
     @Test
     @DisplayName("Test EndPoint save with bad request")
     void testSaveWithBadRequest() {
-        final var request = new UserRequest(" Michel", "123");
+        final var request = new UserRequest(NOME.concat(" "), SENHA);
 
         webTestClient.post().uri("/users")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -79,25 +85,62 @@ class UserControllerImplTest {
     @Test
     @DisplayName("Test find by id endpoint with success")
     void findByIdWithSuccess() {
-        final var id = 1L;
-        final var userResponse = new UserResponse(id, "Michel", "teste");
+        final var userResponse = new UserResponse(ID, NOME, SENHA);
 
         when(userService.findById(anyLong())).thenReturn(Mono.just(User.builder().build()));
         when(userMapper.toResponse(any(User.class))).thenReturn(userResponse);
 
-        webTestClient.get().uri("/users" + id)
+        webTestClient.get().uri("/users" + 1L)
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
-                .jsonPath("$.id").isEqualTo(id)
-                .jsonPath("$.nome").isEqualTo("Michel")
-                .jsonPath("$.senha").isEqualTo("12345678")
-                ;
+                .jsonPath("$.id").isEqualTo(1L)
+                .jsonPath("$.nome").isEqualTo(NOME)
+                .jsonPath("$.senha").isEqualTo(SENHA)
+        ;
     }
 
     @Test
-    void findAll() {
+    @DisplayName("Test find by id endpoint with bad request")
+    void testFindByIdWithBadRequest() {
+        final var userResponse = new UserResponse(ID, NOME, SENHA);
+
+//        when(userService.findById(anyLong())).thenReturn(Mono.just(User.builder().build()));
+//        when(userMapper.toResponse(any(User.class))).thenReturn(userResponse);
+
+        webTestClient.get().uri("/users" + 1L)
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody()
+                .jsonPath("$.path").isEqualTo("/users")
+                .jsonPath("$.status").isEqualTo(HttpStatus.BAD_REQUEST)
+                .jsonPath("$.errors").isEqualTo("Validation Error")
+                .jsonPath("$.message").isEqualTo("Error on validation attributes")
+                .jsonPath("$.errors[0].fieldName").isEqualTo("Error on validation attributes")
+                .jsonPath("$.message").isEqualTo("Field cannot have blank spaces at the begining or at end")
+        ;
+    }
+
+    @Test
+    @DisplayName("Test findAll endpoint with success")
+    void testFindAllWithSuccess() {
+        final var userResponse = new UserResponse(ID, NOME, SENHA);
+
+        when(userService.findAll()).thenReturn(Flux.just(User.builder().build()));
+        when(userMapper.toResponse(any(User.class))).thenReturn(userResponse);
+
+        webTestClient.get().uri("/users")
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.[0].id").isEqualTo(1L)
+                .jsonPath("$.[0].nome").isEqualTo(NOME)
+                .jsonPath("$.[0].senha").isEqualTo(SENHA)
+        ;
+
     }
 
     @Test
