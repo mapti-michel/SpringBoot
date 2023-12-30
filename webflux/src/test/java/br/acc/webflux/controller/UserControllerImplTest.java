@@ -24,6 +24,7 @@ import reactor.core.publisher.Mono;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
@@ -121,6 +122,11 @@ class UserControllerImplTest {
                 .jsonPath("$.errors[0].fieldName").isEqualTo("Error on validation attributes")
                 .jsonPath("$.message").isEqualTo("Field cannot have blank spaces at the begining or at end")
         ;
+
+        verify(userService).findById(anyLong());
+        verify(userMapper).toResponse(any(User.class));
+
+
     }
 
     @Test
@@ -141,10 +147,36 @@ class UserControllerImplTest {
                 .jsonPath("$.[0].senha").isEqualTo(SENHA)
         ;
 
+        verify(userService).findAll();
+        verify(userMapper).toResponse(any(User.class));
+
     }
 
     @Test
-    void update() {
+    @DisplayName("Test update endpoint with success")
+    void testUpdateWithSuccess() {
+        final var request = new UserRequest(NOME, SENHA);
+        final var userResponse = new UserResponse(ID, NOME, SENHA);
+
+        when(userService.update(anyLong(), any(UserRequest.class)))
+                .thenReturn(Mono.just(User.builder().build()));
+
+        when(userMapper.toResponse(any(User.class))).thenReturn(userResponse);
+
+        webTestClient.patch().uri("/users/" + ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(request))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.id").isEqualTo(ID)
+                .jsonPath("$.nome").isEqualTo(NOME)
+                .jsonPath("$.senha").isEqualTo(SENHA)
+        ;
+
+        verify(userService).update(anyLong(), request);
+        verify(userMapper).toResponse(any(User.class));
+
     }
 
     @Test
