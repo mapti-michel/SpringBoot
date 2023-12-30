@@ -5,6 +5,7 @@ import br.acc.webflux.mapper.UserMapper;
 import br.acc.webflux.model.request.UserRequest;
 import br.acc.webflux.model.response.UserResponse;
 import br.acc.webflux.service.UserService;
+import br.acc.webflux.service.excepticon.ObjectNotFoundException;
 import com.mongodb.client.MongoClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -91,7 +92,7 @@ class UserControllerImplTest {
         when(userService.findById(anyLong())).thenReturn(Mono.just(User.builder().build()));
         when(userMapper.toResponse(any(User.class))).thenReturn(userResponse);
 
-        webTestClient.get().uri("/users" + 1L)
+        webTestClient.get().uri("/users/" + 1L)
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isOk()
@@ -110,7 +111,7 @@ class UserControllerImplTest {
 //        when(userService.findById(anyLong())).thenReturn(Mono.just(User.builder().build()));
 //        when(userMapper.toResponse(any(User.class))).thenReturn(userResponse);
 
-        webTestClient.get().uri("/users" + 1L)
+        webTestClient.get().uri("/users/" + 1L)
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isBadRequest()
@@ -180,6 +181,32 @@ class UserControllerImplTest {
     }
 
     @Test
-    void delete() {
+    @DisplayName("Test Delete with Success")
+    void testSeleteWithSuccess() {
+        when(userService.delete(anyLong())).thenReturn(Mono.just(User.builder().build()));
+
+        webTestClient.delete().uri("/users/" + ID)
+                .exchange()
+                .expectStatus().isOk()
+        ;
+
+        verify(userService).delete(anyLong());
+
     }
+
+    @Test
+    @DisplayName("Test Delete with Bad Request")
+    void testSeleteWithBadRequest() {
+        when(userService.delete(anyLong())).thenThrow(new ObjectNotFoundException(""));
+
+        webTestClient.delete().uri("/users/" + ID)
+                .exchange()
+                .expectStatus().isNotFound()
+        ;
+
+        verify(userService).delete(anyLong());
+
+    }
+
+
 }
